@@ -17,14 +17,17 @@ connection_url = URL.create("mssql+pyodbc", query={"odbc_connect": connection_st
 session = Session
 
 try:
-    engine = db.create_engine(connection_url,use_setinputsizes=False)
+    engine = db.create_engine(connection_url, use_setinputsizes=False)
     Base.prepare(autoload_with=engine)
     session = Session(engine)
 except OperationalError as err:
     logging.error("Cannot connect to DB %s", err)
     raise err  
 
-def add_record(record_data_rows: list ):
+def save_data(record_data_rows: list ):
+    '''
+    Saves records to database
+    '''
     Record = Base.classes.staging
     rows = []
 
@@ -52,8 +55,7 @@ def add_record(record_data_rows: list ):
 
     try:
         session.add_all(rows)    
-        session.commit()
+        # session.commit()
     except OperationalError as err:
         logging.error("Cannot insert rows to DB %s", err)
-        raise err  
-      
+        raise err    

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 @dataclass
-class RecordData():
+class RecordData:
     primary_artist: str = ""
     primary_artist_type: str = ""
     featured_artist: str = ""
