@@ -1,9 +1,12 @@
 import sqlalchemy as db
-import logging
 from sqlalchemy.engine import URL
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
+from config.logger import Logger as logger
+
+# FORMAT = '%(asctime)s %(clientip)-15s %(user)-8s %(message)s'
+# logger.basicConfig(format=FORMAT)
 
 Base = automap_base()
 
@@ -21,7 +24,7 @@ try:
     Base.prepare(autoload_with=engine)
     session = Session(engine)
 except OperationalError as err:
-    logging.error("Cannot connect to DB %s", err)
+    logger.log.error("Cannot connect to DB %s", err)
     raise err  
 
 def save_data(record_data_rows: list ):
@@ -55,7 +58,10 @@ def save_data(record_data_rows: list ):
 
     try:
         session.add_all(rows)    
-        # session.commit()
-    except OperationalError as err:
-        logging.error("Cannot insert rows to DB %s", err)
+        session.commit()
+    except Exception as err:
+        session.rollback()
+        logger.logError("Cannot insert rows to DB: %s", err)
         raise err    
+    # finally:
+    #     session.close()
