@@ -16,7 +16,13 @@ class Logger:
     logging.getLogger(__name__)
 
     def logError(self, message: str):
+        '''
+        Log error message.
+        '''
         logging.error(message)
 
     def logInfo(self, message: str):
+        '''
+        Log information message.
+        '''
         logging.info(message)

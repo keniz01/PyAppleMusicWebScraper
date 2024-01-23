@@ -1,3 +1,5 @@
+CREATE DATABASE discography
+GO
 create table staging
 (
 	id int primary key IDENTITY(1,1),

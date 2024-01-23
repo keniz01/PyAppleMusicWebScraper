@@ -16,17 +16,17 @@ class PageContent:
         primary_artist_list_element = driver.find_element(By.CLASS_NAME, 'headings__subtitles')
         primary_artist_list = primary_artist_list_element.text
 
-        genre_element = driver.find_element(By.CLASS_NAME, 'headings__metadata-bottom')
-        genre = genre_element.text.strip().split()[0]
+        genre_element = driver.find_element(By.CLASS_NAME, 'headings__metadata-bottom')        
+        genre = genre_element.text.replace("\u2004", "").split("\xb7")[0]
+
+        year = genre_element.text.replace("\u2004", "").split("\xb7")[1]
 
         description_element = driver.find_element(By.XPATH, "//p[@data-testid='tracklist-footer-description']")
-        last_line_break = description_element.text.rfind('\n')
-        description = description_element.text[last_line_break:]
-        description_arr = description.replace(',', ' ', 1).split(' ', 1)[1].split()
-        year = description_arr[0]
+        
+        label = str(description_element.text.encode('utf-8')).split('\\xe2\\x84\\x97')[1].strip()[4:]
 
-        description_arr.pop(0)
-        label = ' '.join(description_arr, )
+        if not year.isnumeric():
+            year = str(description_element.text.encode('utf-8')).split('\\xe2\\x84\\x97')[1].strip()[4:].strip()
 
         track_list = driver.find_elements(By.CLASS_NAME, 'songs-list-row')
 

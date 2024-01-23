@@ -1,30 +1,25 @@
 import sqlalchemy as db
-from sqlalchemy.engine import URL
-from sqlalchemy.exc import OperationalError
+import os
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from config.logger import Logger as logger
+from dotenv import load_dotenv
 
-# FORMAT = '%(asctime)s %(clientip)-15s %(user)-8s %(message)s'
-# logger.basicConfig(format=FORMAT)
-
+load_dotenv()
 Base = automap_base()
 
-driver='{SQL Server}'
-server='localhost\SQLEXPRESS'
-database='discography'
-trusted_connection='yes'
-
-connection_string = f'driver={driver};server={server};database={database};trusted_connection={trusted_connection}'
-connection_url = URL.create("mssql+pyodbc", query={"odbc_connect": connection_string})
-session = Session
+user_name = os.getenv("DB_USER")
+password = os.getenv("DB_PASSWORD")
+port_number = os.getenv("DB_PORT_NUMBER")
+database_name = os.getenv("DB_NAME")
+server_name = os.getenv("DB_SERVER")
 
 try:
-    engine = db.create_engine(connection_url, use_setinputsizes=False)
+    engine = db.create_engine(f'postgresql://{user_name}:{password}@{server_name}:{port_number}/{database_name}')
     Base.prepare(autoload_with=engine)
     session = Session(engine)
-except OperationalError as err:
-    logger.log.error("Cannot connect to DB %s", err)
+except Exception as err:
+    logger.logError("Cannot connect to DB %s", err)
     raise err  
 
 def save_data(record_data_rows: list ):
@@ -63,5 +58,3 @@ def save_data(record_data_rows: list ):
         session.rollback()
         logger.logError("Cannot insert rows to DB: %s", err)
         raise err    
-    # finally:
-    #     session.close()
