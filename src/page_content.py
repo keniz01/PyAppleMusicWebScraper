@@ -68,8 +68,8 @@ class PageContent:
                 album_label = label,
                 album_type = 'SINGLE' if len(track_list) == 1 else 'ALBUM',
                 track_title = track_title,
-                track_length_mins = f'0{track_length_mins.text}',
-                track_position = track_position,
+                track_length_mins = f'0{track_length_mins.text}' if len(track_length_mins.text) else '00:00',
+                track_position = track_position  if len(track_position) else 0,
                 track_genre = genre,
                 track_label = label
             )

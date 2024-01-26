@@ -24,7 +24,11 @@ def main():
                     save_data(content_list)
                 except: 
                     print("Error")
+                finally:
+                    driver.close()
+
             time.sleep(10)
+            
     except FileNotFoundError:
         print('File not found')
     except IOError:
